@@ -1,0 +1,92 @@
+
+{% extends 'authenticate/base.html' %}
+{% load static %}
+
+{% block content %}
+
+<h1 class="p-3 rounded" style="background-color: #c4c4c4bd";> BÀI THI TIN HỌC CƠ SỞ 1</h1>
+
+{% if user.is_authenticated %}
+  <div class="container-fluid">
+    <div class="row mt-5 p-3 bg-secondary bg-gradient text-white" style="min-height: 500px;">
+      <div class="col-sm-3">
+          <h3 class="mb-4">Thông tin cá nhân</h3>
+          <img class="mb-4" src="{% static 'image/avatar.png' %}" class="responsive-img" style="max-height: 150px">
+          {% if user.is_authenticated %}
+            <p>Họ và tên:  {{ user.last_name}} {{user.first_name}}</p>
+            <p>Mã Sinh viên: {{user.student_code}}</p>
+            {% if user.is_staff %}
+            <p>Vai trò: giảng viên</p>
+            {% else %}
+            <p>Vai trò: sinh viên </p>
+            {% endif %}
+            <p>Email: {{user.email}}</p>
+          {% endif %}
+      </div>
+
+       {% if user.is_admin %}
+        <form method="post" action="{% url 'exam' %}" class="col-sm-9">
+        {% csrf_token %}
+          <h3 class="mb-4" style="text-align: center">Danh sách sinh viên</h3>
+        <div>
+          <table class="table table-dark table-sm">
+            <thead>
+              <tr>
+                <th scope="col">#</th>
+                <th scope="col">Họ tên</th>
+                <th scope="col">mã sinh viên</th>
+                <th scope="col">vai trò</th>
+              </tr>
+            </thead>
+            <tbody>
+            	{% for users in all_users %}
+                  <tr>
+                    <th scope="row">{{users.id}}</th>
+                    <td>{{ users.last_name}} {{users.first_name}}</td>
+                    <td>{{ users.student_code}}</td>
+                     {% if users.is_staff %}
+                      <td>giảng viên</td>
+                      {% else %}
+                      <td>sinh viên</td>
+                      {% endif %}
+                      <td><i style="color: #ccc;cursor: pointer;font-size: 30px" class="bi bi-x on-hover"></i></td>
+                  </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+
+          <button type="submit" class="btn btn-dark" style="position: absolute;right: 5%;bottom: 5%;">thêm sinh viên</button>
+        </div>
+      </form>
+     
+      {% else %}
+      <form method="get" action="{% url 'exam' %}" class="col-sm-9">
+      {% csrf_token %}
+          <h3 class="mb-4" style="text-align: center">Nội quy</h3>
+        <div>
+          <ul>
+            <li>Luôn tạo cho mình một số phương pháp ghi nhớ nhanh để khi nhìn vào màn hình máy tính hoặc bàn phím, bạn có thể nhớ đến nội dung đã học.</li>
+            <li>Luôn tạo cho mình một số phương pháp ghi nhớ nhanh để khi nhìn vào màn hình máy tính hoặc bàn phím, bạn có thể nhớ đến nội dung đã học.</li>
+            <li>Luôn tạo cho mình một số phương pháp ghi nhớ nhanh để khi nhìn vào màn hình máy tính hoặc bàn phím, bạn có thể nhớ đến nội dung đã học.</li>
+            <li>Luôn tạo cho mình một số phương pháp ghi nhớ nhanh để khi nhìn vào màn hình máy tính hoặc bàn phím, bạn có thể nhớ đến nội dung đã học.</li>
+            <li>Luôn tạo cho mình một số phương pháp ghi nhớ nhanh để khi nhìn vào màn hình máy tính hoặc bàn phím, bạn có thể nhớ đến nội dung đã học.</li>
+          </ul>
+
+          <button type="submit" class="btn btn-dark" style="position: absolute;right: 5%;">Bắt đầu làm bài</button>
+        </div>
+      </form>
+    
+      {% endif %}
+
+    </div>
+  </div>
+
+{% else %}
+   <div class="container-fluid">
+    <div class="row mt-5 p-3 bg-secondary bg-gradient text-white" >
+        <h3>Đăng nhập để làm bài thi</h3>
+
+    </div>
+  </div>
+{% endif %}
+{% endblock %}
