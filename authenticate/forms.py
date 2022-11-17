@@ -14,7 +14,9 @@ class EditProfileForm(UserChangeForm):
         fields = ('username', 'first_name', 'last_name', 'email','password','student_code')
           
 
-
+class DeleteUser(forms.Form):
+    def __init__(self, *args, **kwargs):
+        super(DeleteUser, self).__init__(*args, **kwargs)
 
 class SignUpForm(UserCreationForm):
     email = forms.EmailField(label="", widget=forms.TextInput(attrs={'class':'form-control', 'placeholder':'Email Address'}), )
