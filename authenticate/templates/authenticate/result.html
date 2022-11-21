@@ -1,0 +1,34 @@
+{% extends 'authenticate/base.html' %}
+ 
+{% block content %}
+ 
+<div class="container ">
+        
+    <div class="card-columns" style="padding: 10px; margin: 20px;display: flex;align-item:center;justify-content:center">
+        <div class="card" style="width: 32rem; border:5px black solid">
+            <div class="card-body">
+                <h5 class="card-title">Tổng điểm: {{score}}</h5>
+ 
+                <p class="card-text">Tiến trình: {{percent}}%</p>
+                <p class="card-text">Thời gian hoàn thành: {{time}} seconds</p>
+                <p class="card-text">Số câu đúng: {{correct}}</p>
+                <p class="card-text">Số câu sai: {{wrong}}</p>
+                <p class="card-text">tổng câu hỏi: {{total}}</p>
+                <h5>Chúc mừng bạn đã hoàn thành bài thi!</h5>
+        <a class="mt-2" style="text-decoration: none" href="{% url 'home' %}">
+          <button
+            type="button"
+            class="btn btn-dark"
+            style="font-size:14px!important;"
+          >
+            quay về trang chủ
+          </button>
+        </a>
+            </div>
+        </div>
+
+    </div>
+ 
+</div>
+ 
+{% endblock %}

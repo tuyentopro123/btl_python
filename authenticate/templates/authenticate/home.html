@@ -7,7 +7,7 @@
 {% if user.is_authenticated %}
 <div class="container-fluid">
   <div
-    class="row mt-5 p-3 bg-secondary bg-gradient text-white"
+    class="row mt-3 p-3 bg-secondary bg-gradient text-white"
     style="min-height: 500px"
   >
     <div class="col-sm-3">
@@ -27,7 +27,32 @@
       <p>Vai trò: sinh viên</p>
       {% endif %}
       <p>Email: {{user.email}}</p>
-      {% endif %}
+      {% endif %} {% if user.is_admin %} 
+      <div style="display: flex;justify-content: space-around;">
+        <a style="text-decoration: none" href="{% url 'register' %}">
+          <button
+            type="button"
+            class="btn btn-dark"
+            style="font-size:14px!important;"
+          >
+            Thêm sinh viên
+          </button>
+        </a>
+        {% if user.is_staff %} 
+          <a style="text-decoration: none" href="{% url 'addQuestion' %}">
+          <button
+            type="button"
+            class="btn btn-dark"
+            style="font-size:14px!important;"
+
+          >
+            Thêm câu hỏi
+          </button>
+        </a>
+        {% endif %}
+      </div>
+      
+      {% else %}
       <button
         type="button"
         class="btn btn-dark"
@@ -38,6 +63,7 @@
       >
         Phản hồi
       </button>
+      {% endif %}
       <!-- Modal -->
       <div
         class="modal fade"
@@ -71,24 +97,48 @@
               </button>
             </div>
             <div class="modal-body">
-              <form>
+              <form method="POST" action="{% url 'feedback' %}">
+                {% csrf_token %}
                 <div class="mb-3">
                   <label for="message-text" class="col-form-label"
-                    >Message:</label
+                    >người gửi:</label
                   >
-                  <textarea class="form-control" id="message-text"></textarea>
+                  <input
+                    type="text"
+                    value="{{user.username}}"
+                    class="form-control"
+                    disabled="disabled"
+                  />
+                  <input
+                    type="hidden"
+                    name="user_send"
+                    value="{{user.username}}"
+                    class="form-control"
+                    maxlength="200"
+                    required
+                    id="user_send"
+                  />
+                  <label for="message-text" class="col-form-label"
+                    >phản hồi:</label
+                  >
+                  <textarea
+                    name="messages"
+                    maxlength="900"
+                    class="form-control"
+                    id="messages"
+                  ></textarea>
+                </div>
+                <div class="modal-footer">
+                  <button
+                    type="button"
+                    class="btn btn-secondary"
+                    data-dismiss="modal"
+                  >
+                    Đóng
+                  </button>
+                  <button type="submit" class="btn btn-primary">Gửi</button>
                 </div>
               </form>
-            </div>
-            <div class="modal-footer">
-              <button
-                type="button"
-                class="btn btn-secondary"
-                data-dismiss="modal"
-              >
-                Đóng
-              </button>
-              <button type="button" class="btn btn-primary">Gửi</button>
             </div>
           </div>
         </div>
@@ -97,30 +147,61 @@
 
     {% if user.is_admin %}
     <div class="col-sm-9">
-      {% csrf_token %}
-      <h3 class="mb-4" style="text-align: center">Danh sách sinh viên</h3>
+      {% csrf_token %} {% if not all_users %}
+      <h3 class="mb-4" style="text-align: center">Danh sách phản hồi</h3>
+      {% else %}
+      <h3 class="mb-4" style="text-align: center">Danh sách user</h3>
+      {% endif %}
       <div>
+        {% if all_users %}
         <table class="table table-dark table-sm">
           <thead>
             <tr>
               <th scope="col"></th>
               <th scope="col">Họ tên</th>
+              <th scope="col">username</th>
               <th scope="col">mã sinh viên</th>
               <th scope="col">vai trò</th>
+              <th scope="col">trạng thái</th>
+              <th scope="col">Điểm</th>
               <th scope="col"></th>
             </tr>
           </thead>
           <tbody>
             {% for users in all_users %} {% if users.student_code %}
             <tr>
-              <th scope="row">{{ forloop.counter }}</th>
+              <th scope="row">{{ forloop.counter|add:add_number }}</th>
               <td>{{ users.last_name}} {{users.first_name}}</td>
+              <td>{{ users.username}}</td>
               <td>{{ users.student_code}}</td>
+
               {% if users.is_staff %}
               <td>giảng viên</td>
               {% else %}
               <td>sinh viên</td>
-              {% endif %} {% if users.is_admin %}
+              {% endif %} 
+
+              {% if users.status %}
+                <td>Đã Nộp</td>
+              {% else %}
+                {% if users.is_admin %}
+                <td>admin</td>
+                {% else %}
+                <td>Chưa thi</td>
+                {% endif %} 
+              {% endif %} 
+
+              {% if users.is_admin %}
+              <td></td>
+              {% else %}
+                {% if users.status %}
+                  <td>{{ users.point }}</td>
+                {% else %}
+                  <td> ____ </td>
+                {% endif %} 
+              {% endif %}
+              
+              {% if users.is_admin %}
               <td
                 style="
                   user-select: none;
@@ -140,123 +221,123 @@
                   height: 56px;
                 "
               >
-                <button
-                  type="button"
-                  style="border: none; border-radius: 50%; outline: none"
-                  data-toggle="modal"
-                  data-target="#exampleModal"
-                >
-                  <i
-                    style="user-select: none; cursor: pointer"
-                    class="bi bi-x on-hover"
-                  ></i>
-                </button>
-
-                <!-- Modal -->
-                <div
-                  class="modal fade"
-                  id="exampleModal"
-                  style="color: #000"
-                  tabindex="-1"
-                  aria-labelledby="exampleModalLabel"
-                  aria-hidden="true"
-                >
-                  <div class="modal-dialog modal-dialog-centered">
-                    <div class="modal-content">
-                      <div class="modal-header">
-                        <h3 class="modal-title fs-5" id="exampleModalLabel">
-                          thông báo
-                        </h3>
-                        <button
-                          type="button"
-                          class="btn-close"
-                          style="
-                            border: none;
-                            cursor: pointer;
-                            background: transparent;
-                            font-size: 30px;
-                            outline: none;
-                          "
-                          data-dismiss="modal"
-                          aria-label="Close"
-                        >
-                          <i
-                            style="user-select: none; cursor: pointer"
-                            class="bi bi-x on-hover"
-                          ></i>
-                        </button>
-                      </div>
-                      <div class="modal-body">
-                        Bạn có chắc muốn xóa người dùng này
-                      </div>
-                      <div class="modal-footer">
-                        <button
-                          type="button"
-                          class="btn btn-secondary"
-                          data-dismiss="modal"
-                        >
-                          Hủy
-                        </button>
-                        <form
-                          method="POST"
-                          action="{% url 'delete' pk=users.id %}"
-                        >
-                          {% csrf_token %}
-                          <button type="submit" class="btn btn-primary">
-                            Đồng ý
-                          </button>
-                        </form>
-                      </div>
-                    </div>
-                  </div>
-                </div>
+                <form method="POST" action="{% url 'delete' pk=users.id %}">
+                  {% csrf_token %}
+                  <button type="submit" class="btn btn-primary">
+                    <i
+                      style="user-select: none; cursor: pointer"
+                      class="bi bi-x on-hover"
+                    ></i>
+                  </button>
+                </form>
               </td>
               {% endif %}
             </tr>
             {% endif %} {% endfor %}
           </tbody>
         </table>
+        {% endif %}
+        {% if feedback %}
+        <table class="table table-dark table-sm">
+          <thead>
+            <tr>
+              <th scope="col"></th>
+              <th scope="col">Người dùng</th>
+              <th scope="col">Thông báo</th>
+              <th scope="col">Thời gian tạo</th>
+              <th scope="col"></th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for idea in feedback %}
+            <tr>
+              <th scope="row"></th>
+              <td>{{ idea.user_send}}</td>
+              <td>Đã gửi 1 phản hồi</td>
+              <td>{{ idea.time_create}}</td>
+              <td>
+                <form method="GET" action="{% url 'detail' id=idea.id %}">
+                  {% csrf_token %}
+                  <button type="submit" class="btn btn-secondary">Đọc</button>
+                </form>
+              </td>
+            </tr>
 
-        <a style="text-decoration: none" href="{% url 'register' %}">
-          <button
-            type="button"
-            class="btn btn-dark"
-            style="position: absolute; left: -20%; bottom: 5%"
-          >
-            thêm sinh viên
-          </button>
-        </a>
+            {% endfor %}
+          </tbody>
+        </table>
+        {% endif %}
       </div>
+      <!-- pagination -->
+      <nav aria-label="Page navigation example">
+        <ul class="pagination">
+          {% if previous_page != 0 %}
+          <li class="page-item">
+            <a
+              class="page-link"
+              href="?page={{ previous_page }}"
+              aria-label="Previous"
+            >
+              <span aria-hidden="true">&laquo;</span>
+            </a>
+          </li>
+          {% endif %} {% for page in page_count %}
+          <li class="page-item">
+            {% if page == current_page %}
+            <a
+              style="pointer-events: none; color: #ccc; user-select: none"
+              class="page-link"
+              href="?page={{ page }}"
+              >{{page}}</a
+            >
+            {% else %}
+            <a class="page-link" href="?page={{ page }}">{{page}}</a>
+            {% endif %}
+          </li>
+          {% endfor %} {% if next_page != 0 %}
+          <li class="page-item">
+            <a class="page-link" href="?page={{ next_page }}" aria-label="Next">
+              <span aria-hidden="true">&raquo;</span>
+            </a>
+          </li>
+          {% endif %}
+        </ul>
+      </nav>
     </div>
 
     {% else %}
-    <form method="get" action="{% url 'exam' %}" class="col-sm-9">
+    <form method="get" action="{% url 'exam' %}" class="col-sm-9" style="position:relative">
       {% csrf_token %}
       <h3 class="mb-4" style="text-align: center">Nội quy</h3>
       <div>
         <ul>
           <li>
-            Luôn tạo cho mình một số phương pháp ghi nhớ nhanh để khi nhìn vào
-            màn hình máy tính hoặc bàn phím, bạn có thể nhớ đến nội dung đã học.
+            Không nhờ người khác làm bài hộ.
           </li>
           <li>
-            Luôn tạo cho mình một số phương pháp ghi nhớ nhanh để khi nhìn vào
-            màn hình máy tính hoặc bàn phím, bạn có thể nhớ đến nội dung đã học.
+            Không đăng nhập 1 tài khoản trên hai máy
           </li>
           <li>
-            Luôn tạo cho mình một số phương pháp ghi nhớ nhanh để khi nhìn vào
-            màn hình máy tính hoặc bàn phím, bạn có thể nhớ đến nội dung đã học.
+            Trong khi làm bài không mở sang các tab khác trên trình duyệt.
           </li>
           <li>
-            Luôn tạo cho mình một số phương pháp ghi nhớ nhanh để khi nhìn vào
-            màn hình máy tính hoặc bàn phím, bạn có thể nhớ đến nội dung đã học.
+            Nếu có bất kì lỗi kĩ thuật nào vui lòng thông báo đến quản trị viên qua phần phản hồi
           </li>
           <li>
-            Luôn tạo cho mình một số phương pháp ghi nhớ nhanh để khi nhìn vào
-            màn hình máy tính hoặc bàn phím, bạn có thể nhớ đến nội dung đã học.
+            Các trường hợp vi phạm quy chế thi sẽ lập tức hủy bỏ kết quả thi.
           </li>
         </ul>
-
+        <input type="hidden" name="current_user" value={{user.username}}/>
+        {% if user.status %}
+        <button
+          type="submit"
+          class="btn btn-dark"
+          style="position: absolute; right: 5%"
+          disabled="disabled"
+        >
+          Đã hoàn thành
+        </button>
+        {% else %}
         <button
           type="submit"
           class="btn btn-dark"
@@ -264,7 +345,14 @@
         >
           Bắt đầu làm bài
         </button>
+        {% endif %}
       </div>
+      {% if user.status %}
+        <div style="position: absolute;top:0;right:0;">
+          <label>Điểm: </label>
+          <span>{{user.point}}</span>
+        </div>
+      {% endif %}
     </form>
 
     {% endif %}
@@ -273,7 +361,10 @@
 
 {% else %}
 <div class="container-fluid">
-  <div class="row mt-5 p-3 bg-secondary bg-gradient text-white">
+  <div
+    class="row mt-2 p-3 bg-secondary bg-gradient text-white"
+    style="min-height: 50px"
+  >
     <h3>Đăng nhập để làm bài thi</h3>
   </div>
 </div>

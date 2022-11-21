@@ -2,10 +2,10 @@
 
 {% block content %}
 
-<h2 class ="text-center"> Chỉnh sửa thông tin cá nhân </h2>
+<h2 class ="text-center"> Thêm câu hỏi </h2>
 
 
-<form method="POST" action="{% url 'edit_profile' %}">
+<form method="POST" action="{% url 'addQuestion' %}">
 		{% csrf_token %}
 
 		{% if form.errors %}
@@ -31,9 +31,8 @@
 
 		{{ form.as_p }}
 
-
-		<input type="submit" value="Edit Profile" class=" btn btn-secondary">
-    <p><small><a href="{% url 'change_password'%}">Click vào đây</a> để thay đổi mật khẩu của bạn</small></p> 
+                                {# button #}
+		<input type="submit" value="Thêm câu hỏi" class=" btn btn-secondary">
 	</form>
 
 {% endblock %}

@@ -45,8 +45,11 @@
 
       <div class="collapse navbar-collapse" id="navbarSupportedContent">
         <ul class="navbar-nav ml-auto">
-          {% if user.is_authenticated %}
-
+          {% if user.is_authenticated %} {% if user.is_admin %}
+          <li class="nav-item active">
+            <a class="nav-link" href="{% url 'feedback_layout' %}">Feedback</a>
+          </li>
+          {% endif%}
           <li class="nav-item active">
             <a class="nav-link" href="{% url 'logout' %}">Logout</a>
           </li>
@@ -59,11 +62,11 @@
             <a class="nav-link" href="{% url 'login' %}">Login</a>
           </li>
 
-          {% comment %}
+        
           <li class="nav-item active">
             <a class="nav-link" href="{% url 'register' %}">Register</a>
           </li>
-          {% endcomment %} {% endif%}
+           {% endif%}
         </ul>
       </div>
     </nav>

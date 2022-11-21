@@ -1,0 +1,23 @@
+{% extends 'authenticate/base.html' %} {% block content %}
+
+<h1 class="p-3 rounded" style="background-color: #c4c4c4bd" ;>PHẢN HỒI</h1>
+
+{% if user.is_authenticated %}
+<div class="container-fluid">
+  <div
+    class="row mt-3 p-3 bg-secondary bg-gradient text-white"
+    style="min-height: 200px; display: block !important"
+  >
+    <div class="bg-light mb-2 text-dark rounded p-2" style="font-weight: bold;">
+      <label style="margin: 0 !important;">Từ: </label>
+      <span class="">{{post.user_send}}</span><br />
+      <label style="margin: 6px 0 0 0 !important;">Ngày tạo: </label>
+      <span class="">{{post.time_create}}</span><br />
+    </div>
+    <div class="bg-light mb-2 text-dark rounded p-2"  style="min-height: 120px;">
+      <label style="margin: 0 !important;font-weight: bold;">Ý kiến: </label><br />
+      <span class="">{{post.messages}}
+    </div>
+  </div>
+</div>
+{% endif %} {% endblock %}
