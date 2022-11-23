@@ -29,8 +29,14 @@
     </style>
   </head>
   <body>
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-      <a class="navbar-brand" href="{% url 'home'  %}">PTIT</a>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-danger">
+      <a class="navbar-brand" href="{% url 'home'  %}">
+        <img
+          src="https://downloadlogomienphi.com/sites/default/files/logos/download-logo-vector-hoc-vien-cong-nghe-buu-chinh-vien-thong-mien-phi.jpg"
+          style="height: 40px; width: 40px; border-radius: 50%"
+        />
+        PTIT
+      </a>
       <button
         class="navbar-toggler"
         type="button"
@@ -62,11 +68,10 @@
             <a class="nav-link" href="{% url 'login' %}">Login</a>
           </li>
 
-        
           <li class="nav-item active">
             <a class="nav-link" href="{% url 'register' %}">Register</a>
           </li>
-           {% endif%}
+          {% endif%}
         </ul>
       </div>
     </nav>

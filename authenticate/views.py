@@ -34,7 +34,7 @@ def list_feedback(page_number):
     next = 0
     previous = 0
     # all_users= get_user_model().objects.all()
-    all_post= Feedback.objects.all()
+    all_post= Feedback.objects.all().order_by("-time_create").values()
     p = Paginator(all_post, 6)
     page = p.page(page_number)
     if  p.count % 5 == 0:page_count = int(p.count / 5)

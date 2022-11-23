@@ -7,13 +7,17 @@ from .models import Feedback,Quiz
 
 
 class EditProfileForm(UserChangeForm):
-    
+    username = forms.CharField(label="", max_length=100, widget=forms.TextInput(attrs={'class':'form-control', 'placeholder':'Tên'}))
+    email = forms.EmailField(label="", widget=forms.TextInput(attrs={'class':'form-control', 'placeholder':'Email Address'}), )
+    first_name = forms.CharField(label="", max_length=100, widget=forms.TextInput(attrs={'class':'form-control', 'placeholder':'Tên'}))
+    last_name = forms.CharField(label="", max_length=100, widget=forms.TextInput(attrs={'class':'form-control', 'placeholder':'Họ'}))
+    student_code = forms.CharField(label="", max_length=100, widget=forms.TextInput(attrs={'class':'form-control', 'placeholder':'Mã Sinh viên'}))
     password = forms.CharField(label="", widget=forms.TextInput(attrs={'type':'hidden'}))
     class Meta:
         model = User
         #excludes private information from User
         fields = ('username', 'first_name', 'last_name', 'email','password','student_code')
-          
+    
 
 class DeleteUser(forms.Form):
     def __init__(self, *args, **kwargs):
